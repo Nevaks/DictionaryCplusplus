@@ -1,0 +1,1075 @@
+//Linked list = Baris 372, Vektor = Baris 751
+//Array
+/*
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <algorithm>
+using namespace std;
+
+int start(string kamus[], int size[])
+{
+    ifstream file("kamus.txt");
+    string line;
+    int counter = -1;
+
+    if(file.is_open())
+        {
+            while(line != "!")
+                {
+                    size[0]++;
+                    counter++;
+                    getline(file, line);
+                    kamus[counter] = line;
+                }
+            size[0]++;
+            counter++;
+            cout<<counter<<" "<<size[0];
+            file.close();
+        }
+    else
+        {
+            cout<<"\nError, tidak bisa membuka text file atau text file tidak ada."<<endl;
+            cout<<"Tolong restart program."<<endl;
+            return 0;
+        }
+}
+
+void finish(string kamus[], int size[])
+{
+    ofstream file("kamus.txt");
+
+    if(file.is_open())
+        {
+            for(int i = 0; i < size[0]; i++)
+                {
+                    file<<kamus[i]<<endl;
+                    if(kamus[i] == "!")
+                        {
+                            break;
+                        }
+                }
+            cout<<"Semua perubahan yang dibuat akan disimpan."<<endl;
+            file.close();
+        }
+    else
+        {
+            cout<<"\nError, tidak bisa membuka text file atau text file tidak ada."<<endl;
+            cout<<"Semua perubahan tidak dapat disimpan"<<endl<<"Tolong restart program."<<endl;
+        }
+}
+
+void sortWord(string kamus[], int size[])
+{
+    int number = 0, counter = 0;
+    string sorted[2001], sortedList[2001];
+
+    for(int i = 0; i < size[0]; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            sorted[counter] = kamus[i];
+                            counter++;
+                        }
+                }
+            else if(kamus[i] == "!")
+                {
+                    break;
+                }
+        }
+
+    number = counter;
+    sort(sorted, sorted+counter);
+    counter = 0;
+
+    for(int i = 0; i < number; i++)
+        {
+            for(int y = 0; y < size[0]; y++)
+                {
+                    if(y == 0 || y%2 == 0)
+                        {
+                            if(sorted[i] == kamus[y])
+                                {
+                                    sortedList[counter] = kamus[y];
+                                    sortedList[counter+1] = kamus[y+1];
+                                    counter += 2;
+                                    break;
+                                }
+                        }
+                }
+        }
+
+    for(int i = 0; i < counter; i++)
+        {
+            kamus[i] = sortedList[i];
+        }
+}
+
+void search(string kamus[], int size[])
+{
+    string input;
+    cout<<"\nTolong ketik kata yang ingin dicari : ";
+    cin>>input;
+    cout<<endl;
+
+    for(int i = 0; i < size[0]; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] == input)
+                        {
+                            cout<<kamus[i]<<endl;
+                            cout<<kamus[i+1]<<endl;
+                            break;
+                        }
+                    else if(kamus[i] == "!")
+                        {
+                            cout<<"Kata tersebut tidak ada di dalam text file."<<endl;
+                        }
+                }
+        }
+}
+
+void insert(string kamus[], int size[])
+{
+    string input, word;
+    bool found = 0, available;
+
+    do
+        {
+            cout<<"\nTolong ketik kata yang ingin dimasukkan : ";
+             available = 1;
+             cin>>input;
+             cout<<endl;
+             word = input;
+             cin.ignore(32767,'\n');
+             cin.clear();
+             if(input.length() > 36)
+                {
+                    cout<<"Kata tidak boleh melebihi dari 36 huruf."<<endl;
+                    cout<<"\nTolong ketik kata yang ingin dimasukkan : ";
+                    available = 0;
+                }
+
+            if(available)
+                {
+                    for(int i = 0; i < size[0]; i++)
+                        {
+                            if(input == kamus[i])
+                                {
+                                    cout<<"Kata tersebut sudah ada di dalam text file."<<endl;
+                                    found = 1;
+                                    break;
+                                }
+                            else if(kamus[i] == "!")
+                                {
+                                    kamus[i] = input;
+                                    cout<<"Tolong ketik definisi dari kata tersebut : ";
+                                    do
+                                        {
+                                            getline(cin, input);
+                                            if(input.length() > 100)
+                                               {
+                                                   cout<<"Kata tidak boleh melebihi dari 36 huruf."<<endl;
+                                                   cout<<"Tolong ketik definisi dari kata tersebut : ";
+                                               }
+                                        }while(input.length() > 100);
+                                    kamus[i+1] = input;
+                                    kamus[i+2] = "!";
+                                    cout<<"Kata "<<word<<" telah ditambahkan."<<endl;
+                                    size[0] = size[0] + 2;
+                                    sortWord(kamus, size);
+                                    return;
+                                }
+                        }
+                }
+        }while(input.length() > 36 || found);
+}
+
+void deleteWord(string kamus[], int size[])
+{
+    string input, temp1, temp2;
+    int word = 0;
+
+    for(int i = 0; i < size[0]; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            word++;
+                        }
+                    else if(kamus[0] == "!")
+                        {
+                            break;
+                        }
+                }
+        }
+
+    if(word > 0)
+        {
+            cout<<"\nAda sebanyak "<<word<<" kata yang bisa dihapus."<<endl;
+            cout<<"Tolong ketik kata yang ingin dihapuskan : ";
+            cin>>input;
+
+            for(int i = 0; i < size[0]; i++)
+                {
+                    if(i == 0 || i%2 == 0)
+                        {
+                            if(kamus[i] == input)
+                                {
+                                    if(kamus[i+2] == "!")
+                                        {
+                                            kamus[i] = "!";
+                                            kamus[i+1] = "empty";
+                                            kamus[i+2] = "empty";
+                                            cout<<"Kata "<<input<<" telah dihapuskan."<<endl;
+                                            size[0] = size[0] - 2;
+                                            break;
+                                        }
+                                    else
+                                        {
+                                            for(int y = 0; y < size[0]; y++)
+                                                {
+                                                    if(kamus[y+2] == "!")
+                                                        {
+                                                            temp1 = kamus[y];
+                                                            temp2 = kamus[y+1];
+                                                            kamus[y] = "!";
+                                                            kamus[y+1] = "empty";
+                                                            kamus[y+2] = "empty";
+                                                            kamus[i] = temp1;
+                                                            kamus[i+1] = temp2;
+                                                            cout<<"Kata "<<input<<" telah dihapuskan."<<endl;
+                                                            size[0] = size[0] - 2;
+                                                            sortWord(kamus, size);
+                                                            break;
+                                                        }
+                                                }
+                                            break;
+                                        }
+                                }
+                            else if(kamus[i] == "!")
+                                {
+                                    cout<<"\nKata tersebut tidak ada didalam text file."<<endl;
+                                    return;
+                                }
+                        }
+                }
+        }
+    else
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+        }
+}
+
+void countWord(string kamus[], int size[])
+{
+    int wordCount = 0, letterCount = 0;
+
+    for(int i = 0; i < size[0]; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            letterCount = letterCount + kamus[i].length();
+                            wordCount++;
+                        }
+                }
+        }
+
+    if(wordCount > 0 && letterCount > 0)
+        {
+            cout<<"\nAda sebanyak "<<wordCount<<" kata"<<endl;
+            cout<<"Dengan total "<<letterCount<<" huruf."<<endl;
+        }
+    else
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+        }
+}
+
+void print(string kamus[], int size[])
+{
+    cout<<"\nDaftar kata : ";
+
+    if(kamus[0] == "!")
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+            return;
+        }
+
+    for(int i = 0; i < size[0]; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            cout<<kamus[i];
+                            if(kamus[i+2] != "!")
+                                {
+                                    cout<<" ,";
+                                }
+                        }
+                }
+        }
+    cout<<endl;
+}
+
+int main()
+{
+    int size[1] = {-1};
+    string kamus[2001] = {"empty"}, command;
+    int status =  start(kamus, size);
+    switch(status)
+    {
+        case 0 : return 0;
+    }
+    cout<<"Perintah : 0.selesai|1.cari|2.masuk|3.hapus|4.hitung|5.print"<<endl;
+    cout<<"0 = selesai dan menyimpan, 1 = mencari definisi kata, 2 = menambahkan kata ke daftar"<<endl;
+    cout<<"3 = menghapus kata dari daftar, 4 = menghitung jumlah kata dan huruf, 5 = men display daftar kata."<<endl;
+    cout<<"Warning : Keluar dari program tanpa eksekusi perintah 0 tidak akan menyimpan perubahan apapun!"<<endl;
+    while(1)
+        {
+            cout<<"\nKetik sebuah perintah : ";
+            cin>>command;
+            if(command == "0")
+                {
+                    finish(kamus, size);
+                    return 0;
+                }
+            else if(command == "1")
+                {
+                    search(kamus, size);
+                }
+            else if(command == "2")
+                {
+                    insert(kamus, size);
+                }
+            else if(command == "3")
+                {
+                    deleteWord(kamus, size);
+                }
+            else if(command == "4")
+                {
+                    countWord(kamus, size);
+                }
+            else if(command == "5")
+                {
+                    print(kamus, size);
+                }
+            else
+                {
+                    cout<<"Error, perintah tidak dikenali"<<endl;
+                }
+        }
+}
+*/
+
+//Link list
+/*
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+struct node{
+string kata;
+string arti;
+node *next=nullptr;
+};
+
+node *head=nullptr;
+
+void print()
+{
+    node *curr;
+
+    for (curr=head;curr!=nullptr;curr=curr->next)
+    {
+        cout << curr-> kata << ": " << curr->arti << endl;
+    }
+}
+
+void searching(string kata)
+{
+    node *curr;
+    curr = head;
+    while (curr!= nullptr)
+    {
+        if (curr->kata == kata)
+        {
+            cout << curr->kata <<": " << curr->arti << endl;
+            return;
+        }
+        curr=curr->next;
+    }
+    cout << "kata tidak ditemukan" << endl;
+}
+
+void delword(string kata)
+{
+    node *curr;
+    node *temp;
+    curr=head;
+    int a=0,b=0;
+    for(curr=head;curr!=nullptr;curr=curr->next)
+    {
+        a++;
+    }
+    for(curr=head;curr!=nullptr;curr=curr->next)
+    {
+        if(curr->kata != kata)
+            b++;
+    }
+    if (a==b)
+    {
+        cout << "kata tidak ditemukan!" << endl;
+        return;
+    }
+
+    while(curr!=nullptr)
+    {
+        if (head->kata == kata)
+        {
+            temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        if(curr->next->kata==kata)
+        {
+            temp = curr->next;
+            curr->next = temp->next;
+            delete temp;
+            return;
+        }
+        curr=curr->next;
+    }
+}
+
+void ins()
+{
+    node *curr;
+    curr = head;
+    ofstream textfile ("kamus.txt");
+    if (textfile.is_open())
+    {
+        while(curr!=nullptr)
+        {
+            if(curr!=head)
+            {
+                textfile<<endl;
+            }
+            textfile << curr->kata << endl;
+            textfile << curr->arti << endl;
+            curr=curr->next;
+        }
+        textfile << "!";
+    }
+    else
+        cout << "tidak dapat membuka file tujuan!";
+}
+
+void addnod(string kata, string arti)
+{
+    node *add,*last,*naw;
+    add = new node;
+    add->kata = kata;
+    add->arti = arti;
+
+    if(head==NULL)
+    {
+        add->next = head;
+        head = add;
+    }
+    else
+    {
+        naw = head;
+        last = head;
+        while (naw && naw->kata < kata)
+        {
+            last = naw;
+            naw = naw->next;
+        }
+        if (naw == head)
+        {
+            add->next = head;
+            head = add;
+        }
+        else
+        {
+            last->next = add;
+            add->next = naw;
+        }
+    }
+
+}
+
+int main()
+{
+    int itung,menu;
+    itung = 0;
+    ifstream textfile;
+    textfile.open("kamus.txt");
+    string arti;
+    string kata;
+    int a=0,b=0,c=0,d=0,e=0,f=0,g=0,h=0,i=0,j=0,k=0,l=0,m=0,n=0,o=0,p=0,q=0,r=0,s=0,t=0,u=0,v=0,w=0,x=0,y=0,z=0;
+    string tempo;
+    while (textfile.eof()!=true)
+    {
+        textfile >> kata;
+        if (kata==" " || kata == "!")
+            break;
+        kata[0]=toupper(kata[0]);
+        textfile >> ws;
+        getline(textfile,arti);
+        addnod(kata,arti);
+        itung++;
+    }
+
+    for (node *curr=head;curr!=nullptr;curr=curr->next)
+    {
+        tempo=curr->kata;
+        if (tempo[0]=='A')
+        {
+            a++;
+        }
+        if (tempo[0]=='B')
+        {
+            b++;
+        }
+        if (tempo[0]=='C')
+        {
+            c++;
+        }
+        if (tempo[0]=='D')
+        {
+            d++;
+        }
+        if (tempo[0]=='E')
+        {
+            e++;
+        }
+        if (tempo[0]=='F')
+        {
+            f++;
+        }
+        if (tempo[0]=='G')
+        {
+            g++;
+        }
+        if (tempo[0]=='H')
+        {
+            h++;
+        }
+        if (tempo[0]=='I')
+        {
+            i++;
+        }
+        if (tempo[0]=='J')
+        {
+            j++;
+        }
+        if (tempo[0]=='K')
+        {
+            k++;
+        }
+        if (tempo[0]=='L')
+        {
+            l++;
+        }
+        if (tempo[0]=='M')
+        {
+            m++;
+        }
+        if (tempo[0]=='N')
+        {
+            n++;
+        }
+        if (tempo[0]=='O')
+        {
+            o++;
+        }
+        if (tempo[0]=='P')
+        {
+            p++;
+        }
+        if (tempo[0]=='Q')
+        {
+            q++;
+        }
+        if (tempo[0]=='R')
+        {
+            r++;
+        }
+        if (tempo[0]=='S')
+        {
+            s++;
+        }
+        if (tempo[0]=='T')
+        {
+            t++;
+        }
+        if (tempo[0]=='U')
+        {
+            u++;
+        }
+        if (tempo[0]=='V')
+        {
+            v++;
+        }
+        if (tempo[0]=='W')
+        {
+            w++;
+        }
+        if (tempo[0]=='X')
+        {
+            x++;
+        }
+        if (tempo[0]=='Y')
+        {
+            y++;
+        }
+        if (tempo[0]=='Z')
+        {
+            z++;
+        }
+    }
+
+    while(true)
+    {
+        cout << " 0.Save & Exit\n 1.Insert\n 2.Print\n 3.Search\n 4.Delete\n 5.Words counting\n ";
+        cout << "Input: ";
+        cin >> menu;
+
+        if(menu==0)
+        {
+            ins(); return 0;
+        }
+        else if(menu==1)
+        {
+            int alpha=0;
+
+            while(true)
+            {
+            int leng=0;
+            cout << "Masukkan kata: ";
+            cin >> kata;
+
+            kata[0]=toupper(kata[0]);
+            if(kata.length()>36)
+            {
+                cout << "huruf harus kurang dari 36!" << endl;
+                leng=1;
+            }
+            for (node *curr=head;curr!=nullptr;curr=curr->next)
+            {
+                if (curr->kata == kata)
+                    alpha = 1;
+            }
+            if (alpha==1)
+            {
+                cout << "kata telah terdaftar di kamus!" << endl;
+                break;
+            }
+
+            if (leng==0 && alpha == 0)
+            {
+                cout << "Masukkan arti: ";
+                cin.ignore();
+                getline(cin,arti);
+                addnod(kata,arti);
+                cout << endl;
+                ++itung;
+                break;
+            }
+            }
+        }
+        else if(menu==2)
+        {
+            print();
+        }
+        else if (menu==3)
+        {
+                int leng=0;
+                cout << "Masukkan kata: ";
+                cin >> kata;
+                kata[0]=toupper(kata[0]);
+                searching(kata);
+        }
+        else if (menu==4)
+        {
+            cout << "Masukkan kata yang akan di delete: ";
+            cin >> kata;
+            kata[0]=toupper(kata[0]);
+            delword(kata);
+            //print();
+            --itung;
+        }
+        else if (menu==5)
+        {
+            cout << "jumlah kata dengan index huruf A: " << a << endl;
+            cout << "jumlah kata dengan index huruf B: " << b << endl;
+            cout << "jumlah kata dengan index huruf C: " << c << endl;
+            cout << "jumlah kata dengan index huruf D: " << d << endl;
+            cout << "jumlah kata dengan index huruf E: " << e << endl;
+            cout << "jumlah kata dengan index huruf F: " << f << endl;
+            cout << "jumlah kata dengan index huruf G: " << g << endl;
+            cout << "jumlah kata dengan index huruf H: " << h << endl;
+            cout << "jumlah kata dengan index huruf I: " << i << endl;
+            cout << "jumlah kata dengan index huruf J: " << j << endl;
+            cout << "jumlah kata dengan index huruf K: " << k << endl;
+            cout << "jumlah kata dengan index huruf L: " << l << endl;
+            cout << "jumlah kata dengan index huruf M: " << m << endl;
+            cout << "jumlah kata dengan index huruf N: " << n << endl;
+            cout << "jumlah kata dengan index huruf O: " << o << endl;
+            cout << "jumlah kata dengan index huruf P: " << p << endl;
+            cout << "jumlah kata dengan index huruf Q: " << q << endl;
+            cout << "jumlah kata dengan index huruf R: " << r << endl;
+            cout << "jumlah kata dengan index huruf S: " << s << endl;
+            cout << "jumlah kata dengan index huruf T: " << t << endl;
+            cout << "jumlah kata dengan index huruf U: " << u << endl;
+            cout << "jumlah kata dengan index huruf V: " << v << endl;
+            cout << "jumlah kata dengan index huruf W: " << w << endl;
+            cout << "jumlah kata dengan index huruf X: " << x << endl;
+            cout << "jumlah kata dengan index huruf Y: " << y << endl;
+            cout << "jumlah kata dengan index huruf Z: " << z << endl << endl;
+            cout << "TOTAL kata dalam kamus: " << itung << endl << endl;
+        }
+        else
+            cout << "Masukkan angka 0-5!" << endl;
+    }
+}
+*/
+
+//Vektor
+/*
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int start(vector <string>& kamus)
+{
+    ifstream file("kamus.txt");
+    string line;
+    if(file.is_open())
+        {
+            while(line != "!")
+                {
+                    getline(file, line);
+                    kamus.push_back(line);
+                }
+            file.close();
+        }
+    else
+        {
+            cout<<"\nError, tidak bisa membuka text file atau text file tidak ada."<<endl;
+            cout<<"Tolong memulai kembali program."<<endl;
+            return 0;
+        }
+}
+
+void finish(vector <string> kamus)
+{
+    ofstream file("kamus.txt");
+
+    if(file.is_open())
+        {
+            for(int i = 0; i < kamus.size(); i++)
+                {
+                    file<<kamus[i]<<endl;
+                }
+            cout<<"Semua perubahan yang dibuat akan disimpan."<<endl;
+            file.close();
+        }
+    else
+        {
+            cout<<"\nError, tidak bisa membuka text file atau text file tidak ada."<<endl;
+            cout<<"Semua perubahan tidak dapat disimpan"<<endl<<"Tolong restart program."<<endl;
+        }
+}
+
+void sortWord(vector <string>& kamus)
+{
+    vector <string> sortedList, sorted;
+    for(int i = 0; i < kamus.size(); i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            sortedList.push_back(kamus[i]);
+                        }
+                }
+        }
+
+    sort(sortedList.begin(), sortedList.end());
+
+    for(int i = 0; i < sortedList.size(); i++)
+        {
+            for(int y = 0; y < kamus.size(); y++)
+                {
+                    if(y == 0 || y%2 == 0)
+                        {
+                            if(sortedList[i] == kamus[y] && kamus[y] != "!")
+                                {
+                                    sorted.push_back(kamus[y]);
+                                    sorted.push_back(kamus[y+1]);
+                                    break;
+                                }
+                        }
+                }
+        }
+
+    for(int i = 0; i < sorted.size(); i++)
+        {
+            kamus[i] = sorted[i];
+        }
+}
+
+void search(vector <string>& kamus)
+{
+    string input;
+    cout<<"\nTolong ketik kata yang ingin dicari : ";
+    cin>>input;
+    cout<<endl;
+
+    for(int i = 0; i < kamus.size(); i++)
+        {
+            if(kamus[i] == input)
+                {
+                    cout<<kamus[i]<<endl;
+                    cout<<kamus[i+1]<<endl;
+                    break;
+                }
+            else if(kamus[i] == "!")
+                {
+                    cout<<"Kata tersebut tidak ada di dalam text file."<<endl;
+                    return;
+                }
+        }
+}
+
+void insert(vector <string>& kamus)
+{
+    string input, word; bool available, found = 0;
+
+    cout<<"\nTolong ketik kata yang ingin dimasukkan : ";
+    do
+        {
+             available = 1;
+             cin>>input;
+             cout<<endl;
+             if(input.length() > 36)
+                {
+                    cout<<"Kata tidak boleh melebihi dari 36 huruf."<<endl;
+                    cout<<"\nTolong ketik kata yang ingin dimasukkan : ";
+                    available = 0;
+                }
+
+            if(available)
+                {
+                    for(int i = 0; i < kamus.size(); i++)
+                        {
+                            if(i == 0 || i&2 == 0)
+                                {
+                                    if(kamus[i] == input)
+                                        {
+                                            cout<<"Kata tersebut sudah ada di dalam text file."<<endl;
+                                            found = 1;
+                                            break;
+                                        }
+                                    else if(kamus[i] == "!")
+                                        {
+                                            found = 0;
+                                        }
+                                }
+                        }
+                }
+        }while(input.length() > 36 || found);
+
+    word = input;
+    cin.ignore(32767,'\n');
+    cin.clear();
+    string toRemove = "!";
+    kamus.erase(remove(kamus.begin(), kamus.end(), toRemove), kamus.end());
+    kamus.push_back(input);
+
+    cout<<"Tolong ketik definisi dari kata tersebut : ";
+    do
+        {
+            getline(cin, input);
+            if(input.length() > 100)
+                {
+                    cout<<"Definisi tidak boleh melebihi dari 100 huruf."<<endl;
+                    cout<<"Tolong ketik definisi dari kata tersebut : ";
+                }
+        }while(input.length() > 100);
+    kamus.push_back(input);
+    kamus.push_back(toRemove);
+    cout<<"Kata "<<word<<" telah ditambahkan."<<endl;
+
+    sortWord(kamus);
+}
+
+void deleteWord(vector <string>& kamus)
+{
+    string input;
+    int word = 0;
+
+    for(int i = 0; i < kamus.size(); i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            word++;
+                        }
+                }
+        }
+
+    if(word > 0)
+        {
+            cout<<"\nAda sebanyak "<<word<<" kata yang bisa dihapus."<<endl;
+            cout<<"Tolong ketik kata yang ingin dihapuskan : ";
+            cin>>input;
+
+            for(int i = 0; i < kamus.size(); i++)
+                {
+                    if(i == 0 || i%2 == 0)
+                        {
+                            if(kamus[i] == input)
+                                {
+                                    string toRemoveDef = kamus[i+1];
+                                    kamus.erase(remove(kamus.begin(), kamus.end(), input), kamus.end());
+                                    kamus.erase(remove(kamus.begin(), kamus.end(), toRemoveDef), kamus.end());
+                                    cout<<"Kata "<<input<<" telah dihapuskan."<<endl;
+                                    break;
+                                }
+                        }
+                    else if(kamus[i] == "!")
+                        {
+                            cout<<"Kata tersebut tidak ada didalam text file."<<endl;
+                            return;
+                        }
+                }
+            sortWord(kamus);
+        }
+    else
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+            return;
+        }
+}
+
+void countWord(vector <string> kamus)
+{
+    int wordCount = 0, letterCount = 0;
+
+    for(int i = 0; i < kamus.size(); i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    if(kamus[i] != "!")
+                        {
+                            letterCount = letterCount + kamus[i].length();
+                            wordCount++;
+                        }
+                }
+        }
+
+    if(wordCount > 0 && letterCount > 0)
+        {
+            cout<<"\nAda sebanyak "<<wordCount<<" kata"<<endl;
+            cout<<"Dengan total "<<letterCount<<" huruf."<<endl;
+        }
+    else
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+            return;
+        }
+}
+
+void print(vector <string>& kamus)
+{
+    cout<<"\nDaftar kata : ";
+
+    if(kamus[0] == "!")
+        {
+            cout<<"\nText file tidak mengandung kata apapun.";
+            return;
+        }
+
+    for(int i = 0; i < kamus.size()-1; i++)
+        {
+            if(i == 0 || i%2 == 0)
+                {
+                    cout<<kamus[i];
+                    if(kamus[i+2] != "!")
+                        {
+                            cout<<" ,";
+                        }
+                }
+        }
+    cout<<endl;
+}
+
+int main()
+{
+    vector <string> kamus;
+    string command;
+    bool status = 1;
+    status = start(kamus);
+    if(status == 0)
+        {
+            return 0;
+        }
+    cout<<"Perintah : 0.selesai|1.cari|2.masuk|3.hapus|4.hitung|5.print"<<endl;
+    cout<<"0 = selesai dan menyimpan, 1 = mencari definisi kata, 2 = menambahkan kata ke daftar"<<endl;
+    cout<<"3 = menghapus kata dari daftar, 4 = menghitung jumlah kata dan huruf, 5 = men display daftar kata."<<endl;
+    cout<<"Warning : Keluar dari program tanpa eksekusi perintah 0 tidak akan menyimpan perubahan apapun!"<<endl;
+    while (1)
+        {
+            cout<<"\nKetik sebuah perintah : ";
+            cin>>command;
+            if(command == "0")
+                {
+                    finish(kamus);
+                    return 0;
+                }
+            else if(command == "1")
+                {
+                    search(kamus);
+                }
+            else if(command == "2")
+                {
+                    insert(kamus);
+                }
+            else if(command == "3")
+                {
+                    deleteWord(kamus);
+                }
+            else if(command == "4")
+                {
+                    countWord(kamus);
+                }
+            else if(command == "5")
+                {
+                    print(kamus);
+                }
+            else
+                {
+                    cout<<"Error, perintah tidak dikenali"<<endl;
+                }
+        }
+}
+*/
